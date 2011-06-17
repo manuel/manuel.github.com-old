@@ -28,7 +28,9 @@ upstream refs.  When a ref is written to (i.e. the commit it points to
 is changed), a content object message is sent to downstream peers,
 which may trigger a synchronization process.  The content-centric
 layer provides disruption tolerance due to in-network storage of
-interest and content object messages.
+interest and content object messages.  Because all content is
+encrypted and only readable with the right capability, even untrusted
+peers can be used to store and forward messages.
 
 The social subscription network also determines /availability/ of
 content: refs cloned by many peers will have verified and encrypted
