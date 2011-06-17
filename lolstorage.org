@@ -23,7 +23,7 @@ database-like indices.
 
 Communication between peers is mediated by a [[http://www.ccnx.org][content-centric
 networking]] layer, that uses exchanges of interest and content object
-messages.  Downstream peers express long-lived interest message for
+messages.  Downstream peers express long-lived interest messages for
 upstream refs.  When a ref is written to (i.e. the commit it points to
 is changed), a content object message is sent to downstream peers,
 which may trigger a synchronization process.  The content-centric
