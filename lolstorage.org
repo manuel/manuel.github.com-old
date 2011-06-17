@@ -1,0 +1,42 @@
+#+OPTIONS: toc:nil num:nil
+#+TITLE: lolstorage: laughably good social networking and content sharing
+#+AUTHOR: Manuel Simoni
+#+EMAIL: msimoni@gmail.com
+
+/lolstorage/'s approach to P2P [[http://twitter.com][/social networking/]] and /content
+sharing/ is to layer a Git-style model with /commits/ and
+/trees-of-hashes/ (for representing histories of filesystem trees) on
+top of a [[http://tahoe-lafs.org/~zooko/lafs.pdf][Tahoe-LAFS]]-style provider-independently secure /cryptographic
+capability/ system. This runs in the browser in JavaScript and uses
+client-local storage APIs.
+
+The user's /wallet/ contains write-caps for the user's /repositories/
+(which are pointers to commits), and is encrypted with a
+passphrase. The user may generate a cryptographic read cap for a
+repository and share it with other peers. This read cap allows the
+peers to locally /clone/ the state of the shared remote repository,
+and update the local copy efficiently, using similar methods as those
+used in Git fetching and pushing. There is no shared state; only a
+single user ever writes to a repository. The view presented to users
+is an /overlay/ of content from local and remote repositories (e.g. a
+Twitter-like timeline) that may use database-like indices.
+
+Communication between peers is mediated by a [[http://www.ccnx.org][content-centric
+networking]] layer, that uses exchanges of interest and content object
+messages.  Downstream peers express long-lived interest message for
+upstream repositories.  When a repository is written to (i.e. the
+commit it points to is changed), a content object message is sent to
+downstream peers, which may trigger a synchronization process.
+
+The social subscription network also determines /availability/ of
+content: repositories cloned by many peers will have verified and
+encrypted /backups/ at many sites. The social network could also be
+used as a /content distribution network/: peers could provide lists of
+the repositories they locally clone/backup. A client wishing to
+retrieve content from a repository may fairly /balance/ requests
+between other peers that are known to locally clone that
+repository. If many peers clone a repository, it can be accessed with
+high /parallelism/.
+
+The resulting system is simple, secure, and disruption-tolerant vaporware.
+------------------
