@@ -12,8 +12,8 @@ client-local storage APIs.
 
 The user's /wallet/ contains write-caps for the user's /repositories/
 (which are pointers to commits), and is encrypted with a
-passphrase. The user may generate a cryptographic read cap for a
-repository and share it with other peers. This read cap allows the
+passphrase. The user may generate a cryptographic read-cap for a
+repository and share it with other peers. This read-cap allows the
 peers to locally /clone/ the state of the shared remote repository,
 and update the local copy efficiently, using similar methods as those
 used in Git fetching and pushing. There is no shared state; only a
@@ -26,17 +26,19 @@ networking]] layer, that uses exchanges of interest and content object
 messages.  Downstream peers express long-lived interest message for
 upstream repositories.  When a repository is written to (i.e. the
 commit it points to is changed), a content object message is sent to
-downstream peers, which may trigger a synchronization process.
+downstream peers, which may trigger a synchronization process.  The
+content-centric relay is also required to circumvent the same-origin
+policy.
 
 The social subscription network also determines /availability/ of
 content: repositories cloned by many peers will have verified and
 encrypted /backups/ at many sites. The social network could also be
 used as a /content distribution network/: peers could provide lists of
-the repositories they locally clone/backup. A client wishing to
-retrieve content from a repository may fairly /balance/ requests
-between other peers that are known to locally clone that
-repository. If many peers clone a repository, it can be accessed with
-high /parallelism/.
+the repositories (i.e. hashes of read-caps) they locally
+clone/backup. A client wishing to retrieve content from a repository
+may fairly /balance/ requests between other peers that are known to
+locally clone that repository. If many peers clone a repository, it
+can be accessed with high /parallelism/.
 
 The resulting system is simple, secure, and disruption-tolerant vaporware.
 ------------------
