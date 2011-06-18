@@ -3,43 +3,46 @@
 #+AUTHOR: Manuel Simoni
 #+EMAIL: msimoni@gmail.com
 
+* Overview
+
 /lolstorage/'s approach to P2P [[http://twitter.com][/social networking/]] and /content
-sharing/ is to layer a Git-style model with /commits/ and
+sharing/ is to layer a /Git/-style model with /commits/ and
 /trees-of-hashes/ (for representing histories of filesystem trees) on
-top of a [[http://tahoe-lafs.org/~zooko/lafs.pdf][Tahoe-LAFS]]-style provider-independently secure /cryptographic
-capability/ system. It runs in the browser in JavaScript and uses
-local storage APIs.
+top of a [[http://tahoe-lafs.org/~zooko/lafs.pdf][/Tahoe-LAFS/]]-style /cryptographic capability/ system (for
+integrity and privacy of content even when stored on untrusted
+providers). It runs in the browser in JavaScript and uses local
+storage APIs.  Application data is stored as filesystem trees.  An
+example Twitter-like app may store a user's tweets in a YYYY/MM/DD
+directory structure.
 
 The user's /wallet/ contains write-caps for the user's /refs/ (which
 are mutable pointers to commits), and is encrypted with a
 passphrase. The user may generate a cryptographic read-cap for a ref
 and share it with other peers. This read-cap allows the peers to
-locally /clone/ the state of the shared ref, and update the local copy
-efficiently, using similar methods as those used in Git fetching and
-pushing. There is no shared state; only a single user ever writes to a
-ref. The view presented to users is an /overlay/ of content from local
-and cloned refs (e.g. a Twitter-like timeline) that may use
-database-like indices.
+locally /clone/ the state of the shared ref, which is similar to
+/following/ in Twitter. The local clone can be updated efficiently,
+using similar methods as those used in Git fetching and pushing. There
+is no shared state; only a single user ever writes to a ref. Presented
+to users is a locally computed /overlay/ of content from local and
+cloned remote refs (e.g. a Twitter-like timeline) that may index the
+content to provide services like search and sorted and aggregated
+views.
 
-Communication between peers is mediated by a [[http://www.ccnx.org][content-centric
-networking]] layer, that uses exchanges of interest and content object
-messages.  Downstream peers express long-lived interest messages for
-upstream refs.  When a ref is written to (i.e. the commit it points to
-is changed), a content object message is sent to downstream peers,
-which may trigger a synchronization process.  The content-centric
-layer provides disruption tolerance due to in-network storage of
-interest and content object messages.  Because all content is
-encrypted and only readable with the right capability, even untrusted
-peers can be used to store and forward messages.
+Communication between peers is via messages exchanged through a
+[[http://www.ccnx.org][/content-centric networking/]] layer.  Downstream peers express
+long-lived interest messages for upstream refs.  When a ref is written
+to (i.e. the commit it points to is changed), a message is sent to
+downstream peers, which may trigger a synchronization process.  The
+content-centric layer provides disruption tolerance due to in-network
+storage of interest and content object messages.  Because all content
+is encrypted and only readable with the right capability, even
+untrusted peers can store and forward messages.
 
 The social subscription network also determines /availability/ of
 content: refs cloned by many peers will have verified and encrypted
-/backups/ at many sites. The social network could also be used as a
-/content distribution network/: peers could provide lists of the refs
-(i.e. hashes of read-caps) they locally clone/backup. A client wishing
-to retrieve a ref may fairly /balance/ requests between peers that are
-known to locally clone that ref. If many peers clone a ref, it can be
-accessed with high /parallelism/.
+/backups/ at many sites. The social network can also be used as a
+/content distribution network/: the distributed copies of content
+provide scalable and load-balanced storage.
 
 The resulting system is simple, secure, and disruption-tolerant vaporware.
 ------------------
