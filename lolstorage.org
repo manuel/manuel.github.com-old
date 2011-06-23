@@ -1,4 +1,4 @@
-#+OPTIONS: toc:nil num:nil
+#+OPTIONS: toc:2 num:nil
 #+TITLE: lolstorage: laughably good social networking and content sharing
 #+AUTHOR: Manuel Simoni
 #+EMAIL: msimoni@gmail.com
@@ -96,7 +96,7 @@ ref.
  * Create encryption key from salt and read key
  * Decrypt ciphertext using encryption key
 
-** Storage and Capability URLs
+* Storage and Capability URLs
 
 Immutable objects and refs are stored on plain HTTPS servers.
 
