@@ -30,14 +30,88 @@ vaporware.
 
 * Cryptography
 
+These constructions are based on [[http://tahoe-lafs.org/~zooko/lafs.pdf][/Tahoe-LAFS/]].  I more or less
+directly copied them, hoping to keep all of their security features
+intact.  They are simpler because files are not split into
+Reed-Solomon encoded shares.
+
 ** Immutable objects
+
+An immutable object is either a blob, a tree, or a commit.
+
+Immutable objects are enrypted using a fresh encryption key and stored
+under the hash of their ciphertext.
+
+The verify cap for an immutable object contains the ciphertext hash,
+allowing verification of stored content.
+
+The read cap for an immutable object contains the verify cap and the
+encryption key, allowing decryption of stored content.
 
 [[[lolstorage/diagrams/immutable.png]]
 
+*** To write an immutable object
+ * Generate encryption key
+ * Encrypt data using encryption key
+ * Create verify cap by hashing ciphertext
+ * Write ciphertext to store using verify cap as storage index
+ * Return immutable read cap containing verify cap and encryption key
+
+*** To read an immutable object given a read cap
+ * Read ciphertext from store using verify cap as storage index
+ * Check that ciphertext hashes to verify cap
+ * Decrypt ciphertext using encryption key
+
+*** Issues
+ * Verify cap should probably be HMAC of ciphertext
+
 ** Mutable refs
+
+A mutable ref "points to" the current commit: it contains a immutable
+read cap for the commit.
+
+For every mutable ref, a private-key pair is created.  The owner of
+the ref has the private key, and thus can create new versions of the
+ref.
+
 
 [[[lolstorage/diagrams/mutable.png]]
 
-The public key should probably be moved out of the ref content.
+*** To write a mutable ref
+ * Create read key by hashing private key
+ * Generate salt
+ * Create encryption key by hashing salt and read key
+ * Encrypt ref value using encryption key
+ * Sign ciphertext and salt using private key
+ * Create content from ciphertext, salt, signature, and public key
+ * Create verify cap by hashing public key
+ * Write content to store using verify cap as storage index
+ * Return mutable read cap containing verify cap and read key
+
+*** To read a mutable ref given a mutable read cap
+ * Read ciphertext, salt, signature, and public key from store
+   using verify cap as storage index
+ * Check that public key hashes to verify cap
+ * Verify signature of salt and ciphertext using public key
+ * Create encryption key from salt and read key
+ * Decrypt ciphertext using encryption key
+
+** Storage and Capability URLs
+
+Immutable objects and refs are stored on plain HTTPS servers.
+
+The capability URL for an immutable read cap is:
+
+https://server/path/to/verify-cap#encryption-key
+
+The capability URL for a mutable read cap is:
+
+https://server/path/to/verify-cap#read-key
+
+It's important that the verify cap is the last element of the path, so
+it can be mechanically extracted from the URL.
+
+The encryption and read keys are present in the URLs after the sharp
+sign fragment identifier, and thus are not sent to servers over HTTPS.
 
 ----------

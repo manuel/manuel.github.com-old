@@ -7,7 +7,7 @@ lang="en" xml:lang="en">
 <title>lolstorage: laughably good social networking and content sharing</title>
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2011-06-23 06:01:42 CEST"/>
+<meta name="generated" content="2011-06-23 20:27:41 CEST"/>
 <meta name="author" content="Manuel Simoni"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -104,6 +104,12 @@ vaporware.
 <div class="outline-text-2" id="text-1">
 
 
+<p>
+These constructions are based on <a href="http://tahoe-lafs.org/~zooko/lafs.pdf"><i>Tahoe-LAFS</i></a>.  I more or less
+directly copied them, hoping to keep all of their security features
+intact.  They are simpler because files are not split into
+Reed-Solomon encoded shares.
+</p>
 
 </div>
 
@@ -113,8 +119,83 @@ vaporware.
 
 
 <p>
+An immutable object is either a blob, a tree, or a commit.
+</p>
+<p>
+Immutable objects are enrypted using a fresh encryption key and stored
+under the hash of their ciphertext.
+</p>
+<p>
+The verify cap for an immutable object contains the ciphertext hash,
+allowing verification of stored content.
+</p>
+<p>
+The read cap for an immutable object contains the verify cap and the
+encryption key, allowing decryption of stored content.
+</p>
+<p>
 <a href="#[sec-1.1"><img src="lolstorage/diagrams/immutable.png"/></a>
 </p>
+
+</div>
+
+<div id="outline-container-1.1.1" class="outline-4">
+<h4 id="sec-1.1.1">To write an immutable object </h4>
+<div class="outline-text-4" id="text-1.1.1">
+
+<ul>
+<li>
+Generate encryption key
+</li>
+<li>
+Encrypt data using encryption key
+</li>
+<li>
+Create verify cap by hashing ciphertext
+</li>
+<li>
+Write ciphertext to store using verify cap as storage index
+</li>
+<li>
+Return immutable read cap containing verify cap and encryption key
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1.1.2" class="outline-4">
+<h4 id="sec-1.1.2">To read an immutable object given a read cap </h4>
+<div class="outline-text-4" id="text-1.1.2">
+
+<ul>
+<li>
+Read ciphertext from store using verify cap as storage index
+</li>
+<li>
+Check that ciphertext hashes to verify cap
+</li>
+<li>
+Decrypt ciphertext using encryption key
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1.1.3" class="outline-4">
+<h4 id="sec-1.1.3">Issues </h4>
+<div class="outline-text-4" id="text-1.1.3">
+
+<ul>
+<li>
+Verify cap should probably be HMAC of ciphertext
+
+</li>
+</ul>
+</div>
 </div>
 
 </div>
@@ -125,10 +206,114 @@ vaporware.
 
 
 <p>
-<a href="#[sec-1.2"><img src="lolstorage/diagrams/mutable.png"/></a>
+A mutable ref "points to" the current commit: it contains a immutable
+read cap for the commit.
 </p>
 <p>
-The public key should probably be moved out of the ref content.
+For every mutable ref, a private-key pair is created.  The owner of
+the ref has the private key, and thus can create new versions of the
+ref.
+</p>
+
+<p>
+<a href="#[sec-1.2"><img src="lolstorage/diagrams/mutable.png"/></a>
+</p>
+
+</div>
+
+<div id="outline-container-1.2.1" class="outline-4">
+<h4 id="sec-1.2.1">To write a mutable ref </h4>
+<div class="outline-text-4" id="text-1.2.1">
+
+<ul>
+<li>
+Create read key by hashing private key
+</li>
+<li>
+Generate salt
+</li>
+<li>
+Create encryption key by hashing salt and read key
+</li>
+<li>
+Encrypt ref value using encryption key
+</li>
+<li>
+Sign ciphertext and salt using private key
+</li>
+<li>
+Create content from ciphertext, salt, signature, and public key
+</li>
+<li>
+Create verify cap by hashing public key
+</li>
+<li>
+Write content to store using verify cap as storage index
+</li>
+<li>
+Return mutable read cap containing verify cap and read key
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1.2.2" class="outline-4">
+<h4 id="sec-1.2.2">To read a mutable ref given a mutable read cap </h4>
+<div class="outline-text-4" id="text-1.2.2">
+
+<ul>
+<li>
+Read ciphertext, salt, signature, and public key from store
+using verify cap as storage index
+</li>
+<li>
+Check that public key hashes to verify cap
+</li>
+<li>
+Verify signature of salt and ciphertext using public key
+</li>
+<li>
+Create encryption key from salt and read key
+</li>
+<li>
+Decrypt ciphertext using encryption key
+
+</li>
+</ul>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1.3" class="outline-3">
+<h3 id="sec-1.3">Storage and Capability URLs </h3>
+<div class="outline-text-3" id="text-1.3">
+
+
+<p>
+Immutable objects and refs are stored on plain HTTPS servers.
+</p>
+<p>
+The capability URL for an immutable read cap is:
+</p>
+<p>
+<a href="https://server/path/to/verify-cap#encryption-key">https://server/path/to/verify-cap#encryption-key</a>
+</p>
+<p>
+The capability URL for a mutable read cap is:
+</p>
+<p>
+<a href="https://server/path/to/verify-cap#read-key">https://server/path/to/verify-cap#read-key</a>
+</p>
+<p>
+It's important that the verify cap is the last element of the path, so
+it can be mechanically extracted from the URL.
+</p>
+<p>
+The encryption and read keys are present in the URLs after the sharp
+sign fragment identifier, and thus are not sent to servers over HTTPS.
 </p>
 
 <hr/>
@@ -139,7 +324,7 @@ The public key should probably be moved out of the ref content.
 <p class="author"> Author: Manuel Simoni
 <a href="mailto:msimoni@gmail.com">&lt;msimoni@gmail.com&gt;</a>
 </p>
-<p class="date"> Date: 2011-06-23 06:01:42 CEST</p>
+<p class="date"> Date: 2011-06-23 20:27:41 CEST</p>
 <p class="creator">HTML generated by org-mode 6.34c in emacs 23</p>
 </div>
 </div>
