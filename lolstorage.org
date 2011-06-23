@@ -62,9 +62,6 @@ encryption key, allowing decryption of stored content.
  * Check that ciphertext hashes to verify cap
  * Decrypt ciphertext using encryption key
 
-*** Issues
- * Verify cap should probably be HMAC of ciphertext
-
 ** Mutable refs
 
 A mutable ref "points to" the current commit: it contains an immutable
@@ -96,7 +93,71 @@ ref.
  * Create encryption key from salt and read key
  * Decrypt ciphertext using encryption key
 
-* Storage and Capability URLs
+
+* Formats and Encodings
+
+** Basics
+
+All binary data is encoded using [[http://en.wikipedia.org/wiki/Base64#URL_applications]["modified Base64 for URL"]] encoding,
+with "-" and "_" as additional characters beyond [A-Z][a-z][0-9], and
+requiring no trailing padding characters.
+
+Some data may contain [[http://cr.yp.to/proto/netstrings.txt][netstrings]] for additional structure.  A
+/netstring list/ is a netstring containing further netstrings as
+components.
+
+** Capabilities
+
+*** Verify Caps
+
+Base64-encoded binary data.
+
+*** Read Caps
+
+Read capabilities are two-component netstring lists, containing the
+verify cap and the Base64-encoded encryption key or read key,
+depending on type of read cap (immutable or mutable, respectively).
+
+*** Private Keys
+
+Base64-encoded binary data.
+
+** Ref Files
+
+A mutable ref stored on the server has media type "text/html".
+
+It contains the mutable ref content (a netstring list with the
+Base64-encoded components ciphertext, salt, signature, public key) as
+a CDATA section in a HTML element with ID
+"x-lolstorage-storage-object".
+
+In addition it may include JavaScript code that launches a user
+interface for viewing the ref.
+
+** Immutable Files
+
+*** Blob
+
+Base64-encoded blob data.
+
+*** Tree
+
+A /dentry/ is a netstring list =(name read-cap)=.
+
+A tree is a netstring list of dentries.
+
+*** Commit
+
+A /name/value-pair/ is a netstring list =(name value)=.
+
+A commit is a netstring list containing name/value pairs:
+
+ * name: "parent", value: a netstring list of read caps (typically
+   containing just one but defined as a list for conceptual
+   compatibility with Git)
+ * name: "tree", value: read-cap
+
+** Capability URLs
 
 Immutable objects and refs are stored on plain HTTPS servers.
 
@@ -114,7 +175,7 @@ it can be mechanically extracted from the URL.
 The encryption and read keys are present in the URLs after the sharp
 sign fragment identifier, and thus are not sent to servers over HTTPS.
 
-** Alternate Servers
+*** Alternate Servers
 
 It is possible to list alternate storage servers in an URL.
 
@@ -130,16 +191,10 @@ alternate capability:
 
 Additional servers can be listed with alternate2, alternate3, ...
 
-** Mutable ref file
 
-A mutable ref stored on the server has media type "text/html".
 
-It contains the mutable ref content (ciphertext, salt, signature,
-public key) as a CDATA section in a HTML element with ID
-"x-lolstorage-storage-object".  (The exact encoding, possibly
-base64-encoded netstrings, has yet to be decided.)
 
-In addition it may include JavaScript code that launches a user
-interface for viewing the ref.
+
+
 
 ----------

@@ -7,7 +7,7 @@ lang="en" xml:lang="en">
 <title>lolstorage: laughably good social networking and content sharing</title>
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2011-06-23 21:39:07 CEST"/>
+<meta name="generated" content="2011-06-23 22:04:06 CEST"/>
 <meta name="author" content="Manuel Simoni"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -109,10 +109,13 @@ vaporware.
 <li><a href="#sec-1.2">Mutable refs </a></li>
 </ul>
 </li>
-<li><a href="#sec-2">Storage and Capability URLs </a>
+<li><a href="#sec-2">Formats and Encodings </a>
 <ul>
-<li><a href="#sec-2.1">Alternate Servers </a></li>
-<li><a href="#sec-2.2">Mutable ref file </a></li>
+<li><a href="#sec-2.1">Basics </a></li>
+<li><a href="#sec-2.2">Capabilities </a></li>
+<li><a href="#sec-2.3">Ref Files </a></li>
+<li><a href="#sec-2.4">Immutable Files </a></li>
+<li><a href="#sec-2.5">Capability URLs </a></li>
 </ul>
 </li>
 </ul>
@@ -300,6 +303,7 @@ Create encryption key from salt and read key
 <li>
 Decrypt ciphertext using encryption key
 
+
 </li>
 </ul>
 </div>
@@ -309,8 +313,166 @@ Decrypt ciphertext using encryption key
 </div>
 
 <div id="outline-container-2" class="outline-2">
-<h2 id="sec-2">Storage and Capability URLs </h2>
+<h2 id="sec-2">Formats and Encodings </h2>
 <div class="outline-text-2" id="text-2">
+
+
+
+</div>
+
+<div id="outline-container-2.1" class="outline-3">
+<h3 id="sec-2.1">Basics </h3>
+<div class="outline-text-3" id="text-2.1">
+
+
+<p>
+All binary data is encoded using <a href="http://en.wikipedia.org/wiki/Base64#URL_applications">"modified Base64 for URL"</a> encoding,
+with "-" and "_" as additional characters beyond [A-Z][a-z][0-9], and
+requiring no trailing padding characters.
+</p>
+<p>
+Some data may contain <a href="http://cr.yp.to/proto/netstrings.txt">netstrings</a> for additional structure.  A
+<i>netstring list</i> is a netstring containing further netstrings as
+components.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2.2" class="outline-3">
+<h3 id="sec-2.2">Capabilities </h3>
+<div class="outline-text-3" id="text-2.2">
+
+
+
+</div>
+
+<div id="outline-container-2.2.1" class="outline-4">
+<h4 id="sec-2.2.1">Verify Caps </h4>
+<div class="outline-text-4" id="text-2.2.1">
+
+
+<p>
+Base64-encoded binary data.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2.2.2" class="outline-4">
+<h4 id="sec-2.2.2">Read Caps </h4>
+<div class="outline-text-4" id="text-2.2.2">
+
+
+<p>
+Read capabilities are two-component netstring lists, containing the
+verify cap and the Base64-encoded encryption key or read key,
+depending on type of read cap (immutable or mutable, respectively).
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2.2.3" class="outline-4">
+<h4 id="sec-2.2.3">Private Keys </h4>
+<div class="outline-text-4" id="text-2.2.3">
+
+
+<p>
+Base64-encoded binary data.
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2.3" class="outline-3">
+<h3 id="sec-2.3">Ref Files </h3>
+<div class="outline-text-3" id="text-2.3">
+
+
+<p>
+A mutable ref stored on the server has media type "text/html".
+</p>
+<p>
+It contains the mutable ref content (a netstring list with the
+Base64-encoded components ciphertext, salt, signature, public key) as
+a CDATA section in a HTML element with ID
+"x-lolstorage-storage-object".
+</p>
+<p>
+In addition it may include JavaScript code that launches a user
+interface for viewing the ref.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2.4" class="outline-3">
+<h3 id="sec-2.4">Immutable Files </h3>
+<div class="outline-text-3" id="text-2.4">
+
+
+
+</div>
+
+<div id="outline-container-2.4.1" class="outline-4">
+<h4 id="sec-2.4.1">Blob </h4>
+<div class="outline-text-4" id="text-2.4.1">
+
+
+<p>
+Base64-encoded blob data.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2.4.2" class="outline-4">
+<h4 id="sec-2.4.2">Tree </h4>
+<div class="outline-text-4" id="text-2.4.2">
+
+
+<p>
+A <i>dentry</i> is a netstring list <code>(name read-cap)</code>.
+</p>
+<p>
+A tree is a netstring list of dentries.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2.4.3" class="outline-4">
+<h4 id="sec-2.4.3">Commit </h4>
+<div class="outline-text-4" id="text-2.4.3">
+
+
+<p>
+A <i>name/value-pair</i> is a netstring list <code>(name value)</code>.
+</p>
+<p>
+A commit is a netstring list containing name/value pairs:
+</p>
+<ul>
+<li>
+name: "parent", value: a netstring list of read caps (typically
+containing just one but defined as a list for conceptual
+compatibility with Git)
+</li>
+<li>
+name: "tree", value: read-cap
+
+</li>
+</ul>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2.5" class="outline-3">
+<h3 id="sec-2.5">Capability URLs </h3>
+<div class="outline-text-3" id="text-2.5">
 
 
 <p>
@@ -339,9 +501,9 @@ sign fragment identifier, and thus are not sent to servers over HTTPS.
 
 </div>
 
-<div id="outline-container-2.1" class="outline-3">
-<h3 id="sec-2.1">Alternate Servers </h3>
-<div class="outline-text-3" id="text-2.1">
+<div id="outline-container-2.5.1" class="outline-4">
+<h4 id="sec-2.5.1">Alternate Servers </h4>
+<div class="outline-text-4" id="text-2.5.1">
 
 
 <p>
@@ -364,30 +526,15 @@ alternate capability:
 <p>
 Additional servers can be listed with alternate2, alternate3, &hellip;
 </p>
-</div>
-
-</div>
-
-<div id="outline-container-2.2" class="outline-3">
-<h3 id="sec-2.2">Mutable ref file </h3>
-<div class="outline-text-3" id="text-2.2">
 
 
-<p>
-A mutable ref stored on the server has media type "text/html".
-</p>
-<p>
-It contains the mutable ref content (ciphertext, salt, signature,
-public key) as a CDATA section in a HTML element with ID
-"x-lolstorage-storage-object".  (The exact encoding, possibly
-base64-encoded netstrings has yet to be decided.)
-</p>
-<p>
-In addition it may include JavaScript code that launches a user
-interface for viewing the ref.
-</p>
+
+
+
+
 
 <hr/>
+</div>
 </div>
 </div>
 </div>
@@ -395,7 +542,7 @@ interface for viewing the ref.
 <p class="author"> Author: Manuel Simoni
 <a href="mailto:msimoni@gmail.com">&lt;msimoni@gmail.com&gt;</a>
 </p>
-<p class="date"> Date: 2011-06-23 21:39:07 CEST</p>
+<p class="date"> Date: 2011-06-23 22:04:06 CEST</p>
 <p class="creator">HTML generated by org-mode 6.34c in emacs 23</p>
 </div>
 </div>
