@@ -67,7 +67,7 @@ encryption key, allowing decryption of stored content.
 
 ** Mutable refs
 
-A mutable ref "points to" the current commit: it contains a immutable
+A mutable ref "points to" the current commit: it contains an immutable
 read cap for the commit.
 
 For every mutable ref, a private-key pair is created.  The owner of
@@ -102,16 +102,44 @@ Immutable objects and refs are stored on plain HTTPS servers.
 
 The capability URL for an immutable read cap is:
 
-https://server/path/to/verify-cap#encryption-key
+=https://server/path/to/verify-cap.html#encryption-key=
 
 The capability URL for a mutable read cap is:
 
-https://server/path/to/verify-cap#read-key
+=https://server/path/to/verify-cap.html#read-key=
 
 It's important that the verify cap is the last element of the path, so
 it can be mechanically extracted from the URL.
 
 The encryption and read keys are present in the URLs after the sharp
 sign fragment identifier, and thus are not sent to servers over HTTPS.
+
+** Alternate Servers
+
+It is possible to list alternate storage servers in an URL.
+
+This example URL includes the alternate server
+=https://otherserver/otherpath= with the URL parameter "alternate1":
+
+=https://server/path/to/verify-cap.html?alternate1=https%3A%2F%2Fotherserver%2Fotherpath#read-key=
+
+The verify cap will be appended to alternate server, giving the
+alternate capability:
+
+=https://otherserver/otherpath/verify-cap.html#read-key=
+
+Additional servers can be listed with alternate2, alternate3, ...
+
+** Mutable ref file
+
+A mutable ref stored on the server has media type "text/html".
+
+It contains the mutable ref content (ciphertext, salt, signature,
+public key) as a CDATA section in a HTML element with ID
+"x-lolstorage-storage-object".  (The exact encoding, possibly
+base64-encoded netstrings, has yet to be decided.)
+
+In addition it may include JavaScript code that launches a user
+interface for viewing the ref.
 
 ----------
