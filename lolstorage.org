@@ -30,7 +30,11 @@ vaporware.
 
 * Cryptography
 
-** Mutable ref
+** Immutable objects
+
+[[[lolstorage/diagrams/immutable.png]]
+
+** Mutable refs
 
 [[[lolstorage/diagrams/mutable.png]]
 
