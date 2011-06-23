@@ -38,4 +38,6 @@ vaporware.
 
 [[[lolstorage/diagrams/mutable.png]]
 
+The public key should probably be moved out of the ref content.
+
 ----------
