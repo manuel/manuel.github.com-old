@@ -1,7 +1,9 @@
-#+OPTIONS: toc:2 num:nil
 #+TITLE: lolstorage: laughably good social networking and content sharing
+#+OPTIONS: toc:1 num:nil
 #+AUTHOR: Manuel Simoni
 #+EMAIL: msimoni@gmail.com
+
+* Description
 
 /lolstorage/'s approach to P2P [[http://twitter.com][/social networking/]] and /content
 sharing/ is to layer a /Git/-style model with /commits/ and
@@ -29,24 +31,22 @@ The resulting system is simple, secure, and disruption-tolerant
 vaporware.
 
 * Cryptography
-
 These constructions are based on [[http://tahoe-lafs.org/~zooko/lafs.pdf][/Tahoe-LAFS/]].  I more or less
 directly copied them, hoping to keep all of their security features
 intact.  They are simpler because files are not split into
 Reed-Solomon encoded shares.
-
-** Immutable objects
+** Objects
 
 An immutable object is either a blob, a tree, or a commit.
 
-Immutable objects are enrypted using a fresh encryption key and stored
-under the hash of their ciphertext.
+Objects are encrypted using a fresh encryption key and stored under
+the hash of their ciphertext.
 
-The verify cap for an immutable object contains the ciphertext hash,
-allowing verification of stored content.
+The verify cap for an object contains the ciphertext hash, allowing
+verification of stored content.
 
-The read cap for an immutable object contains the verify cap and the
-encryption key, allowing decryption of stored content.
+The read cap for an object contains the verify cap and the encryption
+key, allowing decryption of stored content.
 
 [[[lolstorage/diagrams/immutable.png]]
 
@@ -62,15 +62,14 @@ encryption key, allowing decryption of stored content.
  * Check that ciphertext hashes to verify cap
  * Decrypt ciphertext using encryption key
 
-** Mutable refs
+** Refs
 
 A mutable ref "points to" the current commit: it contains an immutable
 read cap for the commit.
 
 For every mutable ref, a private-key pair is created.  The owner of
-the ref has the private key, and thus can create new versions of the
+the ref has the private key, and thus can sign new versions of the
 ref.
-
 
 [[[lolstorage/diagrams/mutable.png]]
 
@@ -93,19 +92,13 @@ ref.
  * Create encryption key from salt and read key
  * Decrypt ciphertext using encryption key
 
-
-* Formats and Encodings
-
-** Basics
-
+* Storage
 All binary data is encoded using [[http://en.wikipedia.org/wiki/Base64#URL_applications]["modified Base64 for URL"]] encoding,
 with "-" and "_" as additional characters beyond [A-Z][a-z][0-9], and
 requiring no trailing padding characters.
 
 Some data may contain [[http://cr.yp.to/proto/netstrings.txt][netstrings]] for additional structure.  A
-/netstring list/ is a netstring containing further netstrings as
-components.
-
+/netlist/ is a netstring containing further netstrings as components.
 ** Capabilities
 
 *** Verify Caps
@@ -114,49 +107,46 @@ Base64-encoded binary data.
 
 *** Read Caps
 
-Read capabilities are two-component netstring lists, containing the
-verify cap and the Base64-encoded encryption key or read key,
-depending on type of read cap (immutable or mutable, respectively).
+Read capabilities are two-component netlists, containing the verify
+cap and the Base64-encoded encryption key or read key, depending on
+type of read cap (immutable or mutable, respectively).
 
 *** Private Keys
 
 Base64-encoded binary data.
-
-** Ref Files
-
-A mutable ref stored on the server has media type "text/html".
-
-It contains the mutable ref content (a netstring list with the
-Base64-encoded components ciphertext, salt, signature, public key) as
-a CDATA section in a HTML element with ID
-"x-lolstorage-storage-object".
-
-In addition it may include JavaScript code that launches a user
-interface for viewing the ref.
-
-** Immutable Files
-
+** Objects
 *** Blob
 
 Base64-encoded blob data.
 
 *** Tree
 
-A /dentry/ is a netstring list =(name read-cap)=.
+A /dentry/ is a netlist =(name read-cap)=.
 
-A tree is a netstring list of dentries.
+A tree is a netlist of dentries.
 
 *** Commit
 
-A /name/value-pair/ is a netstring list =(name value)=.
+A /name/value pair/ is a netlist =(name value)=.
 
-A commit is a netstring list containing name/value pairs:
+A commit is a netlist containing name/value pairs:
 
- * name: "parent", value: a netstring list of read caps (typically
+ * name: "parents", value: a netlist of read caps (typically
    containing just one but defined as a list for conceptual
    compatibility with Git)
- * name: "tree", value: read-cap
+ * name: "tree", value: read cap
 
+** Refs
+A mutable ref stored on the server has media type "text/html".
+
+It contains the mutable ref content (a netlist with the Base64-encoded
+components ciphertext, salt, signature, public key) as a CDATA section
+in a HTML element with ID "x-lolstorage-storage-object".
+
+In addition it may include JavaScript code that launches a user
+interface for viewing the ref.
+
+* Server Protocol
 ** Capability URLs
 
 Immutable objects and refs are stored on plain HTTPS servers.
@@ -191,10 +181,8 @@ alternate capability:
 
 Additional servers can be listed with alternate2, alternate3, ...
 
+** GET /path/verify-cap.html
 
-
-
-
-
+** POST /path/verify-cap.html
 
 ----------
