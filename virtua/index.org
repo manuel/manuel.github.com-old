@@ -1,5 +1,5 @@
 #+TITLE: Virtua
-#+OPTIONS: toc:1 num:nil
+#+OPTIONS: toc:1 num:nil creator:nil date:nil
 #+AUTHOR: Manuel Simoni
 #+EMAIL: msimoni@gmail.com
 
