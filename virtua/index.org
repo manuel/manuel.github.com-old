@@ -1,0 +1,14 @@
+#+TITLE: Virtua
+#+OPTIONS: toc:1 num:nil
+#+AUTHOR: Manuel Simoni
+#+EMAIL: msimoni@gmail.com
+
+/Virtua/ is a new programming language I'm designing.
+
+Links:
+
+ * [[https://github.com/manuel/schampignon][Schampignon]], an experimental interpreter (also see =fexpr= branch)
+ * [[http://subjot.com/manuel/virtua][Latest thinking]], updated regularly
+ * [[http://axisofeval.blogspot.com/search/label/virtua][Blog posts related to Virtua]], updated whenever something major happens
+
+------------
