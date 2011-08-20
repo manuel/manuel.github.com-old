@@ -7,8 +7,8 @@
 
 Links:
 
- * [[https://github.com/manuel/schampignon][Schampignon]], an experimental interpreter (also see =fexpr= branch)
+ * [[https://github.com/manuel/schampignon][Schampignon]], an experimental interpreter
  * [[http://subjot.com/manuel/virtua][Latest thinking]], updated regularly
- * [[http://axisofeval.blogspot.com/search/label/virtua][Blog posts related to Virtua]], updated whenever something major happens
+ * [[http://axisofeval.blogspot.com/search/label/virtua][Blog posts]], updated whenever something major happens
 
 ------------
