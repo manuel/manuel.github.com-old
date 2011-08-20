@@ -7,7 +7,7 @@
 
 Links:
 
- * [[https://github.com/manuel/schampignon][Schampignon]], an experimental interpreter
+ * [[https://github.com/manuel/schampignon][Schampignon]], [[https://github.com/manuel/schampignon/blob/fexpr-nt/schampignon.js][SchroomCloud]], experimental interpreters
  * [[http://subjot.com/manuel/virtua][Latest thinking]], updated regularly
  * [[http://axisofeval.blogspot.com/search/label/virtua][Blog posts]], updated whenever something major happens
 
