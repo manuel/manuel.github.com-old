@@ -5,13 +5,13 @@
 
 /Virtua/ is a new programming language I'm designing, with:
 
- * [[http://www.cs.indiana.edu/pub/techreports/TR615.pdf][delimited continuations]] for abstracting control flow,
- * a [[http://piumarta.com/software/cola/objmodel2.pdf][combined object lambda architecture]] for abstracting structure and behavior,
+ * [[http://www.cs.indiana.edu/pub/techreports/TR615.pdf][delimited continuations]] for abstracting control,
+ * a [[http://piumarta.com/software/cola/objmodel2.pdf][combined object/lambda architecture]] for abstracting state and behavior,
  * and [[http://www.wpi.edu/Pubs/ETD/Available/etd-090110-124904/unrestricted/jshutt.pdf][lexically-scoped fexprs]] for abstracting form.
 
 Links:
 
- * [[https://github.com/manuel/schampignon][Schampignon]], experimental interpreter in three flavors
+ * [[https://github.com/manuel/schampignon][Schampignon]], experimental interpreter
  * [[http://subjot.com/manuel/virtua][Latest thinking]], updated regularly
  * [[http://axisofeval.blogspot.com/search/label/virtua][Blog posts]], updated whenever something major happens
 
