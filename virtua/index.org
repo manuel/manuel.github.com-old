@@ -13,8 +13,8 @@ What the experts say:
 
  * /I am now convinced that delimited continuations are a bad idea./
    -- Simon Peyton-Jones
- * /Object-oriented programming offers a sustainable way to write
-   spaghetti code./ -- Paul Graham
+ * /I think that object orientedness is almost as much of a hoax as
+   Artificial Intelligence./ -- Alexander Stepanov
  * /I do not favor frankenprogramming, including fexprs
    (frankenprogramming expressions)./ -- David Barbour
 
