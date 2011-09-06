@@ -9,6 +9,15 @@
  * a [[http://piumarta.com/software/cola/objmodel2.pdf][combined object/lambda architecture]] for abstracting state and behavior,
  * and [[http://www.wpi.edu/Pubs/ETD/Available/etd-090110-124904/unrestricted/jshutt.pdf][lexically-scoped fexprs]] for abstracting form.
 
+What the experts say:
+
+ * /I am now convinced that delimited continuations are a bad idea./
+   -- Simon Peyton Jones
+ * /Object-oriented programming offers a sustainable way to write
+   spaghetti code./ -- Paul Graham
+ * /I do not favor frankenprogramming, including fexprs
+   (frankenprogramming expressions)./ -- David Barbour
+
 Links:
 
  * [[https://github.com/manuel/schampignon][Schampignon]], experimental interpreter
