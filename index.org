@@ -1,0 +1,9 @@
+#+TITLE: Manuel's Vaporwarehouse
+#+OPTIONS: toc:nil num:nil creator:nil date:nil
+#+AUTHOR: Manuel Simoni
+#+EMAIL: msimoni@gmail.com
+
+* [[./virtua/index.html][Virtua]], a new programming language
+* [[./lolstorage.html][lolstorage]], laughably good social networking and content sharing
+------
+
