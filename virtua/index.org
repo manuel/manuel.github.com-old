@@ -20,7 +20,7 @@ What the experts say:
 
 Links:
 
- * [[https://github.com/manuel/schampignon][Schampignon]], experimental interpreter
+ * [[https://github.com/manuel/virtua][Virtua]], [[https://github.com/manuel/schampignon][Schampignon]], experimental interpreters
  * [[http://subjot.com/manuel/virtua][Latest thinking]], updated regularly
  * [[http://axisofeval.blogspot.com/search/label/virtua][Blog posts]], updated whenever something major happens
 
