@@ -3,6 +3,11 @@
 #+AUTHOR: Manuel Simoni
 #+EMAIL: msimoni@gmail.com
 
+Lolstorage is now at [[https://github.com/manuel/lolstorage]].  The text
+below is of an older design.
+
+---------------
+
 * Description
 
 /lolstorage/'s approach to P2P [[http://twitter.com][/social networking/]] and /content
